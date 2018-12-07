@@ -1,0 +1,51 @@
+//	int р = buf.find('.');
+//	int g = 0;
+//	int N = ceil(static_cast<double>(р) / kind);//ну тут я определяю сколько всего разрядов будет
+//
+//
+//	for (int i = 0; i < N; i++)//печатаем целую часть массива
+//	{
+//		if ((g + 4) > р) {
+//			A[i].to_comma = buf.substr(g, р - g);
+//			for (int j = (р - g); j < 4; j++)//дополняю нулями
+//				A[i].to_comma += std::to_string(0);
+//		}
+//		else {
+//			A[i].to_comma = buf.substr(g, kind);
+//			g = g + 4;
+//		}
+//	}
+//
+//	for (int i = 0; i < N / 2; i++)//переворачиваем
+//	{
+//		swap(A[i].to_comma, A[N - i - 1].to_comma);
+//	}
+//	//for (int i = 0; i < N ; i++)//переворачиваем
+//	//{
+//	//	cout<< A[i].to_comma<<" ";
+//	//}
+//	//cout << endl;
+//	//////////////////////////////////////////////////////////////////////////////////////////////////////
+//	g = р + 1;
+//	N = ceil((static_cast<double>(buf.size()) - р - 1) / kind);
+//	for (int i = 0; i < N; i++)//печатаем вещественную часть массива
+//	{
+//		if ((g + 4) >= buf.size()) {
+//			A[i].after_comma = buf.substr(g, buf.size());
+//			for (int j = (buf.size() - g); j < 4; j++)//дополняю нулями
+//				A[i].after_comma += std::to_string(0);
+//		}
+//		else {
+//			A[i].after_comma = buf.substr(g, 4);
+//			g = g + 4;
+//		}
+//	}
+//	for (int i = 0; i < N / 2; i++)//переворачиваем
+//	{
+//		swap(A[i].after_comma, A[N - i - 1].after_comma);
+//	}
+//	//for (int i = 0; i < N; i++)//переворачиваем
+//	//{
+//	//	cout << A[i].after_comma << " ";
+//	//}
+//	//cout << endl;
