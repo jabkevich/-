@@ -41,6 +41,9 @@ bool ReadLong(string num)//ïğîâåğêà ÷èñëà. ß ÍÅ ĞÀÇÎÁĞÀËÑß Â ÌÍÎÆÅÑÒÂÀÕ, ÒÀÌ ÊÀÊ
 		}
 	}
 
+	if (num[0] == '0') return false;
+		
+	
 	h = num.length();
 	if ((num[h - 1] == '.') || (num[0] == '.')) return false;
 
