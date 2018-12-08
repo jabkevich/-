@@ -84,7 +84,7 @@ void PrintLong(separation_String &Astr)//переворачивает чсило
 	
 	int р = Astr.NUM.find('.');
 	int g = 0;
-	int N = ceil(static_cast<double>(р) / kind);//ну тут € определ€ю сколько всего разр€дов будет
+	int N = ceil((double)(р) / kind);//ну тут € определ€ю сколько всего разр€дов будет
 	Astr.N_after = N;
 	Astr.Nn_after = р % kind;
 	for (int i = 0; i < N; i++)//печатаем целую часть массива
@@ -115,9 +115,7 @@ void PrintLong(separation_String &Astr)//переворачивает чсило
 		}
 	}
 }
-void chek(int &i, int &j, separation_String &NUM, int &n);
-void chek1(int &i, int &j, separation_String &NUM, int &n);
-char chek2(int &n);
+void chek(int &i, int &j, string NUM[MAX], int &n);
 void ADD(separation_String &A, separation_String &B, separation_String &C)//—ложение чисел
 {
 	char a1;
@@ -126,38 +124,34 @@ void ADD(separation_String &A, separation_String &B, separation_String &C)//—лож
 	C.N_to = A.N_to;
 	C.N_after = A.N_after;
 	for (int i = 0; i < A.N_after; i++) {
-
 		int g = A.after_comma[i].size();
 			for (int j = 0; j < g; j++) {
-
-				chek(i, j, A, a);
-				chek(i, j, B, b);
+				chek(i, j, A.after_comma, a);
+				chek(i, j, B.after_comma, b);
 				a = a + b + c;
 				c = 0;
 				if (a >= 16) { c = +1; a -= 16; }
 				if (a > 9) {
-					a1 = chek2(a);
+					a1 = SS[a + 1];
 					C.after_comma[i] += a1;
 				}
 				else {
 					C.after_comma[i] += std::to_string(a);
 				}
 			}
-		
 	}
 	g = A.to_comma[0].size();
 	a = 0; b = 0;
 	for (int i = 0; i < A.N_to; i++) {
-
 		g = A.to_comma[i].size();
 		for (int j = 0; j < g; j++) {
-			chek1(i, j, A, a);
-			chek1(i, j, B, b);
+			chek(i, j, A.to_comma, a);
+			chek(i, j, B.to_comma, b);
 			a = a + b+c;
 			c = 0;
 			if (a >= 16) { c = +1; a -= 16; }
 			if (a > 9) {
-				a1 = chek2(a);
+				a1 = SS[a + 1];
 				C.to_comma[i] += a1;
 			}
 			else {
@@ -170,11 +164,8 @@ void ADD(separation_String &A, separation_String &B, separation_String &C)//—лож
 			C.to_comma[i+1] +=std::to_string(c);
 			else C.to_comma[i ] += std::to_string(c);
 			C.N_to = i + 1;
-		}
-		
-		
+		}	
 	}
-	cout << endl;
 	for (int i = 0; i < C.N_after; i++)
 	{
 		C.NUM += C.after_comma[i];
@@ -191,67 +182,15 @@ void ADD(separation_String &A, separation_String &B, separation_String &C)//—лож
 	
 	
 }
-
-char chek2(int &n)
+void chek(int &i, int &j,  string NUM[MAX], int &n)
 {
-
-	switch (n)
-	{
-	
-	case 10: return 'A'; break;
-	case 11: return 'B'; break;
-	case 12: return 'C'; break;
-	case 13: return 'D'; break;
-	case 14: return'E'; break;
-	case 15: return 'F'; break;
+   for (int g = 1; g < 17; g++) {
+		if (NUM[i][j] == SS[g]) {
+			n = g-1; break;
+		}
 	}
 }
-void chek(int &i, int &j, separation_String &NUM, int &n)
-{
-	
-	switch (NUM.after_comma[i][j])
-	{
-	case '0': n = 0; break;
-	case '1': n = 1; break;
-	case '2': n = 2; break;
-	case '3': n = 3; break;
-	case '4': n = 4; break;
-	case '5': n = 5; break;
-	case '6': n = 6; break;
-	case '7': n = 7; break;
-	case '8': n = 8; break;
-	case '9': n = 9; break;
-	case 'A': n = 10; break;
-	case 'B': n = 11; break;
-	case 'C': n = 12; break;
-	case 'D': n = 13; break;
-	case 'E': n = 14; break;
-	case 'F': n = 15; break;
-	}
-}
-void chek1(int &i, int &j, separation_String &NUM, int &n)
-{
 
-	switch (NUM.to_comma[i][j])
-	{
-	case '0': n = 0; break;
-	case '1': n = 1; break;
-	case '2': n = 2; break;
-	case '3': n = 3; break;
-	case '4': n = 4; break;
-	case '5': n = 5; break;
-	case '6': n = 6; break;
-	case '7': n = 7; break;
-	case '8': n = 8; break;
-	case '9': n = 9; break;
-	case 'A': n = 10; break;
-	case 'B': n = 11; break;
-	case 'C': n = 12; break;
-	case 'D': n = 13; break;
-	case 'E': n = 14; break;
-	case 'F': n = 15; break;
-	}
-}
 bool LessLong(separation &A, separation &B)//процедура проверки большего числа
 {
 	return 0;
@@ -261,7 +200,6 @@ void EQLONG(separation_String &A, separation_String& B) //процедура проверки рав
 	if ((A.to_count==B.to_count)&&(A.after_count==B.after_count))  ;
 	string ch = "";
 	if ((A.to_count > B.to_count)) {
-		
 		for (int j = B.to_count; j < A.to_count; j++) {
 			ch += "0";
 		}
@@ -294,14 +232,12 @@ int main()
 {
 	setlocale(LC_ALL, "rus");
 	int amount_of_numbers = 0;
-	
 	separation_String numA;
 	separation_String numB;
 	separation_String numC;
 	ifstream infile("input.TXT");
 	ofstream outfile("output.TXT");
 	string buffer;
-
 	bool chek;
 	while (!infile.eof())
 	{
