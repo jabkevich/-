@@ -29,37 +29,26 @@ struct separation_String //структуры для хранения числа в строке
 
 bool ReadLong(string num)//проверка числа. Я НЕ РАЗОБРАЛСЯ В МНОЖЕСТВАХ, ТАМ КАКАЯ ТО ЕБАЛА, ПО ЭТОМУ ТАК
 {
-	bool a = true;
+	bool chek = true;
 	int point = 0;
 	int  count; //count_to-счетчик значений до знака. count_after-счтетчик значений после знка 
 	int g = num.size();
-	int h = num.length();
 	count_to = 0, count_after = 0;
-	for (int i = 0; i < h; i++) {
+	for (int i = 0; i < g; i++) {
 		if (num[i] == ' ') {
 			num.erase(i, 1); i--;
 		}
 	}
-
-	if (num[0] == '0') return false;
-		
-	
-	h = num.length();
-	if ((num[h - 1] == '.') || (num[0] == '.')) return false;
-
-
-
+	g = num.size();
 	for (int i = 0; i < g; i++) {
 		count = 0;
 		for (int j = 0; j < 17; j++) {
 			if ((num[i] == SS[j]) && (SS[j] == '.')) {
 				point++;
-				
 				count++;
 			}
 			else if (num[i] == SS[j])
 				count++;
-			
 		}
 		if (point == 1)
 			count_after++;
@@ -67,21 +56,17 @@ bool ReadLong(string num)//проверка числа. Я НЕ РАЗОБРАЛСЯ В МНОЖЕСТВАХ, ТАМ КАК
 			count_to++;
 		if (count == 0) return false;
 	}
-	if ((num[h - 1] == '.') || (num[0] == '.'));
-	if ((point == 0) || (point > 1)) a = false;// если запятая не одна, то выход
-	if (num.size() > 99) a = false;
-	return a;
+	if ((num[g - 1] == '.') || (num[0] == '.') || (num[0] == '0'))return false;
+	if ((point == 0) || (point > 1)) chek = false;// если запятая не одна, то выход
+	if (num.size() > 99) return false;
+	return chek;
 }
-
-void PrintLong(separation_String &Astr)//переворачивает чсило
+void PrintLong(separation_String &Astr)//переворачивает чсило, разбиваю на разряды по 4
 {
-
 	for (int j = 0; j < Astr.NUM.size()/2; j++){ //переворачиваю число 
 
 		swap(Astr.NUM[j], Astr.NUM[Astr.NUM.size() - j - 1]);
     }
-
-	
 	int р = Astr.NUM.find('.');
 	int g = 0;
 	int N = ceil((double)(р) / kind);//ну тут я определяю сколько всего разрядов будет
@@ -102,7 +87,6 @@ void PrintLong(separation_String &Astr)//переворачивает чсило
 	g = р + 1;
 	N = ceil((static_cast<double>(Astr.NUM.size()) - р - 1) / kind);
 	Astr.N_to = N;
-	
 	for (int i = 0; i < N; i++)//печатаем вещественную часть массива
 	{
 		if ((g + 4) >= Astr.NUM.size()) {
@@ -115,7 +99,14 @@ void PrintLong(separation_String &Astr)//переворачивает чсило
 		}
 	}
 }
-void chek(int &i, int &j, string NUM[MAX], int &n);
+void chek(int &i, int &j, string NUM[MAX], int &n)
+{
+	for (int g = 1; g < 17; g++) {
+		if (NUM[i][j] == SS[g]) {
+			n = g - 1; break;
+		}
+	}
+}
 void ADD(separation_String &A, separation_String &B, separation_String &C)//Сложение чисел
 {
 	char a1;
@@ -182,20 +173,36 @@ void ADD(separation_String &A, separation_String &B, separation_String &C)//Слож
 	
 	
 }
-void chek(int &i, int &j,  string NUM[MAX], int &n)
+
+
+bool LessLong(separation_String &A, separation_String &B)//процедура проверки большего числа
 {
-   for (int g = 1; g < 17; g++) {
-		if (NUM[i][j] == SS[g]) {
-			n = g-1; break;
+	int a, b;
+	bool ch=true;
+	for (int i = A.N_to-1; i >= 0; i--)
+	{
+		int g = A.to_comma[i].size()-1;
+		for (int j = g; j >= 0; j--) {
+			chek(i, j, A.to_comma, a);
+			chek(i, j, B.to_comma, b);
+			if (a > b) { return true; }
+			else if (b > a) { return false; }
 		}
 	}
+	for (int i = A.N_after-1; i >= 0; i--)
+	{
+		int g = A.after_comma[i].size()-1;
+		for (int j = g; j > 0; j--) {
+			chek(i, j, A.after_comma, a);
+			chek(i, j, B.after_comma, b);
+			if (a > b) { return true; }
+			else if (b > a) { return false; }
+		}
+		
+	}
+	return true;
 }
-
-bool LessLong(separation &A, separation &B)//процедура проверки большего числа
-{
-	return 0;
-}
-void EQLONG(separation_String &A, separation_String& B) //процедура проверки равенства длинны 
+void EQLONG(separation_String &A, separation_String& B) //процедура дополненя нулями
 {
 	if ((A.to_count==B.to_count)&&(A.after_count==B.after_count))  ;
 	string ch = "";
@@ -272,6 +279,8 @@ int main()
 	PrintLong(numA);// переворачиваем число A
 	PrintLong(numB);//переворачиваем число B
 	ADD( numA, numB, numC);//складываем числа
+	chek = LessLong(numA, numB);
+	if (chek == true) { cout << "A >= B" << endl; } else { cout << "A < B" << endl; }
 	outfile << numC.NUM;
 	system("pause");
 }
