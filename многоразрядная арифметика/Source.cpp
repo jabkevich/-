@@ -234,14 +234,76 @@ void EQLONG(separation_String &A, separation_String& B) //процедура дополненя ну
 
 
 }
+void SubLong(separation_String &A, separation_String &B, separation_String &C)
+{
+	char a1;
+	int g = A.after_comma[0].size();
+	int a = 0, b = 0, c = 0, d=0; // переменные в которые я буду класть число из строки
+	bool c_chek = false;
+	C.N_to = A.N_to;
+	C.N_after = A.N_after;
+	for (int i = 0; i < A.N_after; i++) {
+		int g = A.after_comma[i].size();
+		for (int j = 0; j < g; j++) {
+			chek(i, j, A.after_comma, a);
+			chek(i, j, B.after_comma, b);
+			if (a < b) { c_chek = true; a += 16; }
+			else c_chek = false;
+			a = a -b-c;
+			if (c_chek == true)c = 1;else c=0;
+			if (a > 9) {
+				a1 = SS[a + 1];
+				C.after_comma[i] += a1;
+			}
+			else {
+				C.after_comma[i] += std::to_string(a);
+			}
+		}
+	}
+	g = A.to_comma[0].size();
+	a = 0; b = 0;
+	for (int i = 0; i < A.N_to; i++) {
+		g = A.to_comma[i].size();
+		for (int j = 0; j < g; j++) {
+			chek(i, j, A.to_comma, a);
+			chek(i, j, B.to_comma, b);
+			if (a < b) { c_chek =true; a += 16; } 
+			else { c_chek = false; }
+			a = a - b - c;
+			if (c_chek == true) c = 1; else c = 0;
+			if (a > 9) {
+				a1 = SS[a + 1];
+				C.to_comma[i] += a1;
+			}
+			else {
+				C.to_comma[i] += std::to_string(a);
+			}
+		}
+	}
+	for (int i = 0; i < C.N_after; i++)
+	{
+		C.NUM += C.after_comma[i];
+	}
+	C.NUM += ".";
+	for (int i = 0; i < C.N_to; i++)
+	{
+		C.NUM += C.to_comma[i];
+	}
+	for (int j = 0; j < C.NUM.size() / 2; j++) { //переворачиваю число 
 
+		swap(C.NUM[j], C.NUM[C.NUM.size() - j - 1]);
+	}
+
+
+}
 int main()
 {
 	setlocale(LC_ALL, "rus");
 	int amount_of_numbers = 0;
 	separation_String numA;
 	separation_String numB;
-	separation_String numC;
+	separation_String SummC;
+	separation_String diffC;
 	ifstream infile("input.TXT");
 	ofstream outfile("output.TXT");
 	string buffer;
@@ -278,9 +340,12 @@ int main()
 	}
 	PrintLong(numA);// переворачиваем число A
 	PrintLong(numB);//переворачиваем число B
-	ADD( numA, numB, numC);//складываем числа
+	ADD( numA, numB, SummC);//складываем числа
+	outfile << SummC.NUM;
+	outfile << "\n";
 	chek = LessLong(numA, numB);
-	if (chek == true) { cout << "A >= B" << endl; } else { cout << "A < B" << endl; }
-	outfile << numC.NUM;
+	if (chek == true) { SubLong(numA, numB, diffC); outfile << diffC.NUM;}else { cout << "A < B" << endl; }
+	
+	
 	system("pause");
 }
