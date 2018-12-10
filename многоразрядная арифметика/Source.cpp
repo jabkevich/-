@@ -10,6 +10,7 @@ int count_to , count_after ;
 struct separation_String //структуры для хранения числа в строке
 {
 	string NUM;
+	string NUM1;
 	string to_comma[MAX]; //до запятой
 	string after_comma[MAX];//после
 	int to_count;//количество цифр до запятой в NUM
@@ -19,7 +20,46 @@ struct separation_String //структуры для хранения числа в строке
 	int Nn_to;//количество цифр в последнем разряде до запятой
 	int Nn_after;//количество цифр в последнем разряде после запятой
 };
-bool ReadLong(string num)//проверка числа. Я НЕ РАЗОБРАЛСЯ В МНОЖЕСТВАХ, ТАМ КАКАЯ ТО ЕБАЛА, ПО ЭТОМУ ТАК
+bool ChekLong(string num);
+void EQLONG(separation_String &A, separation_String& B);
+bool ReadLong(separation_String &numA, separation_String &
+	numB) {
+	int amount_of_numbers = 0;
+	string buffer;
+	bool chek;//переменная для проверк числа в файле
+	ifstream infile("input.TXT");
+	while (!infile.eof())
+	{
+		infile >> buffer;
+		chek = ChekLong(buffer);
+		if ((chek == true) && (amount_of_numbers == 0)) {
+			numA.NUM = buffer;
+			numA.NUM1 = buffer;
+			numA.to_count = count_to;
+			numA.after_count = count_after;
+			amount_of_numbers++;
+		}
+		else if ((chek == true) && (amount_of_numbers == 1)) {
+			numB.NUM = buffer;
+			numB.NUM1 = buffer;
+			numB.to_count = count_to;
+			numB.after_count = count_after;
+			amount_of_numbers++;
+		}
+		if (amount_of_numbers == 2) {
+			EQLONG(numA, numB);
+			break;
+		}
+	}
+	if (amount_of_numbers != 2) {
+		switch (amount_of_numbers)
+		{
+		case 1: cout << "найденно только одно число. Выход из программы"; system("pause"); return false;
+		case 0: cout << "не найденно ни одного числа. Выход из программы"; system("pause"); return false;
+		}
+	}
+}
+bool ChekLong(string num)//проверка числа. Я НЕ РАЗОБРАЛСЯ В МНОЖЕСТВАХ, ТАМ КАКАЯ ТО ЕБАЛА, ПО ЭТОМУ ТАК
 {
 	bool chek = true;
 	int point = 0;
@@ -48,7 +88,13 @@ bool ReadLong(string num)//проверка числа. Я НЕ РАЗОБРАЛСЯ В МНОЖЕСТВАХ, ТАМ КАК
 			count_to++;
 		if (count == 0) return false;
 	}
-	if ((num[g - 1] == '.') || (num[0] == '.') || ((num[0] == '0')&&(num.find('.') !=1))) return false;
+	if (num[0] == '0') {
+		for (int i = 0; i < num.find('.'); i++) {
+			if (num[i] != '0')return false;
+		}
+	}
+	g = num.size();
+	if ((num[0]=='.')||(num[g-1]=='.')) return false;
 	if ((point == 0) || (point > 1)) chek = false;// если запятая не одна, то выход
 	if (num.size() > 99) return false;
 	return chek;
@@ -145,7 +191,7 @@ void ADD(separation_String &A, separation_String &B, separation_String &C)//Слож
 				C.to_comma[i] += std::to_string(a);
 			}
 		}
-		if (c > 0) 
+		if ((c > 0) &&(i+1==A.N_to))
 		{ 
 			if (A.to_comma[i].size()==4)
 			C.to_comma[i+1] +=std::to_string(c);
@@ -288,53 +334,37 @@ void SubLong(separation_String &A, separation_String &B, separation_String &C)
 
 		swap(C.NUM[j], C.NUM[C.NUM.size() - j - 1]);
 	}
-
-
+	for (int i = 0; i < C.NUM.find('.')-1; i++) {
+		if (C.NUM[i] == '0') { C.NUM.erase(i, 1); i--; }
+		else break;
+	}
+	for (int i = C.NUM.size()-1; i > C.NUM.find('.')+1; i--) {
+		if (C.NUM[i] == '0') { C.NUM.erase(i, 1); }
+		else break;
+	}
 }
 int main()
 {
 	setlocale(LC_ALL, "rus");
-	int amount_of_numbers = 0;//количество найденных чисел
-	separation_String numA;//Число А
+ 	separation_String numA;//Число А
 	separation_String numB;//Число B
 	separation_String SummC;//сумма чисел A и B
 	separation_String diffC;//разность чисел A и B
-	ifstream infile("input.TXT"); //Входной файл
 	ofstream outfile("output.TXT");//Выходной файл
-	string buffer;
-	bool chek;//переменная для проверк числа в файле
-	while (!infile.eof())
-	{
-		infile >> buffer;
-		chek = ReadLong(buffer);
-		if ((chek == true) && (amount_of_numbers == 0)) { 
-			numA.NUM = buffer; 
-			numA.to_count = count_to;
-			numA.after_count = count_after;
-			amount_of_numbers++;
-		}
-		else if ((chek == true) && (amount_of_numbers == 1)) {
-			numB.NUM = buffer;
-			numB.to_count = count_to;
-			numB.after_count = count_after;
-			amount_of_numbers++;
-		}
-		if (amount_of_numbers == 2) {
-			EQLONG(numA, numB);
-			break;
-		}
-	}
-	if (amount_of_numbers != 2) {
-		switch (amount_of_numbers)
-		{
-		case 1: cout << "найденно только одно число. Выход из программы"; system("pause"); return 0;
-		case 0: cout << "не найденно ни одного числа. Выход из программы"; system("pause"); return 0;
-		}
-	}
+	if (ReadLong(numA, numB) == false) return 0;
 	PrintLong(numA);// переворачиваем число A
 	PrintLong(numB);//переворачиваем число B
 	ADD( numA, numB, SummC);//складываем числа
-	outfile << numA.NUM <<" + "<<numB.NUM<<" = " << SummC.NUM << "\n";
-	if (chek == LessLong(numA, numB)) { SubLong(numA, numB, diffC); outfile << numA.NUM << " - " << numB.NUM << " = " << diffC.NUM;}else { cout << "A < B" << endl; }
+	outfile << numA.NUM1 <<" + "<<numB.NUM1<<" = " << SummC.NUM << "\n";
+    if (LessLong(numA, numB)==true) {
+		SubLong(numA, numB, diffC);
+		outfile << numA.NUM1 << " - " << numB.NUM1 << " = " << diffC.NUM;
+	}
+	else { 
+		SubLong(numB, numA, diffC);
+	    outfile << numB.NUM1 << " - " << numA.NUM1 << " = " << diffC.NUM; 
+	}
+
 	system("pause");
+	return 0;
 }
